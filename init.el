@@ -2,6 +2,23 @@
 ;;; Commentary:
 ;;; Code:
 
+;; --------------------------------------------------------------------------------
+;; Setup use-package and melpa repository.
+
+(require 'package)
+
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(package-initialize)
+
+(eval-when-compile
+  (require 'use-package)
+  (require 'use-package-ensure)
+  (require 'diminish)
+  (require 'bind-key))
+
+(setq use-package-always-ensure t)
+
+;; --------------------------------------------------------------------------------
 
 (setq user-mail-address "henry.kleynhans@gmail.com")
 (setq user-full-name "Henry Kleynhans")
@@ -15,6 +32,10 @@
 ;; Configure a default custom fase.
 (setq default-frame-alist '((font . "Fira Code 12")))
 
+(use-package rainbow-delimiters
+  :init
+  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
+
 ;; Use the doom-dracula color scheme
 (use-package doom-themes
   :init
@@ -23,10 +44,6 @@
 (use-package solaire-mode
   :init
   (solaire-global-mode))
-
-(use-package rainbow-delimiters
-  :init
-  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
 ;; --------------------------------------------------------------------------------
 ;; Editor changes
@@ -102,7 +119,7 @@
 ;; Use dooom modeline.  This requires manually running:
 ;;    M-x all-the-icons-install-fonts
 ;; one time.
-(use-package all-the-icons :ensure t)
+(use-package all-the-icons)
 
 (use-package doom-modeline
   :init (doom-modeline-mode t)
@@ -149,28 +166,10 @@
   )
 
 (use-package clang-format
-  :ensure
   :bind(("C-c TAB" . clang-format-region))
   :config
   (setq clang-format-style "file")
   (setq clang-format-fallback-style "Microsoft"))
-
-;; (use-package go-mode
-;;   :init (add-hook 'go-mode-hook
-;;                   (lambda()
-;;                     (add-hook 'before-save-hook 'gofmt-before-save)
-;;                     (if (not (string-match "go" compile-command))
-;;                         (set (make-local-variable 'compile-command)
-;;                              "go build -v && go test -v && go vet"))
-;;                     (setq gofmt-command "goimports")
-;;                     (setq truncate-lines t)
-;;                     (setq indent-tabs-mode t)
-;;                     (setq tab-width 8))))
-
-(use-package rustic
-  :ensure
-  :config
-  (setq rustic-format-on-save t))
 
 (use-package lsp-mode
   :init (setq lsp-keymap-prefix "C-c l")
@@ -206,7 +205,8 @@
   :diminish flycheck-mode
   :init (add-hook 'after-init-hook 'global-flycheck-mode))
 
-(use-package auctex)
+(use-package tex
+  :ensure auctex)
 
 (use-package company
   :diminish company-mode
@@ -219,10 +219,6 @@
 (use-package company-box
   :diminish company-box-mode
   :hook (company-mode . company-box-mode))
-
-(use-package company-lsp
-  :commands company-lsp
-  :config (push 'company-lsp company-backends))
 
 (use-package projectile
   :diminish projectile-mode
@@ -239,9 +235,6 @@
 (use-package counsel-projectile
   :diminish counsel-projectile-mode
   :config (counsel-projectile-mode))
-
-(use-package go-projectile
-  :diminish)
 
 (use-package magit)
 
@@ -260,12 +253,6 @@
   :diminish which-key-mode
   :config
   (which-key-mode 1))
-
-(use-package org
-  :config
-  (setq org-directory "~/org")
-  (setq org-log-done t)
-  (setq org-startup-indented t))
 
 (use-package flyspell
   :defer t
@@ -304,5 +291,8 @@
                   (join-line -1)))
 
 (toggle-frame-fullscreen)
+
+(setq custom-file (concat user-emacs-directory "custom.el"))
+(load custom-file 'noerror)
 
 ;;; init.el ends here
