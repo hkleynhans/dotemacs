@@ -206,7 +206,11 @@
   :init (add-hook 'after-init-hook 'global-flycheck-mode))
 
 (use-package tex
-  :ensure auctex)
+  :ensure auctex
+  :config
+  (setq TeX-auto-save nil)
+  (setq-default TeX-master nil)
+  (auto-fill-mode 1))
 
 (use-package company
   :diminish company-mode
